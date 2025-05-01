@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # apna-college
 this is my first reprosetry
 <br>
@@ -13,3 +14,6 @@ doing another commit for chaking
 doing 3rd commit
 
 imran 
+=======
+# Yarri
+>>>>>>> d2296e4ad7276ef8d651cf41e5dde87892e0b569
