@@ -1,0 +1,218 @@
+/* Folder structure:
+- index.html
+- results.html
+- style.css
+- script.js
+*/
+
+/* index.html */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="home">
+  <header>
+    <nav>
+      <a href="#">Gmail</a>
+      <a href="#">Images</a>
+    </nav>
+  </header>
+
+  <main>
+    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google Logo" class="logo">
+    <form id="searchForm">
+      <input type="text" id="searchInput" placeholder="Search Google or type a URL">
+      <div class="buttons">
+        <button type="submit">Google Search</button>
+        <button type="button">I'm Feeling Lucky</button>
+      </div>
+    </form>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+/* results.html */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Results</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="results">
+  <header>
+    <form id="searchForm">
+      <input type="text" id="searchInput">
+      <button type="submit">Search</button>
+    </form>
+  </header>
+  <main>
+    <div id="resultsContainer"></div>
+    <div class="pagination">
+      <button id="prevBtn">&laquo; Prev</button>
+      <button id="nextBtn">Next &raquo;</button>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+/* style.css */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.home main {
+  margin-top: 15vh;
+}
+
+.logo {
+  width: 272px;
+  height: auto;
+}
+
+form {
+  margin-top: 20px;
+}
+
+input[type="text"] {
+  width: 50%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 24px;
+}
+
+.buttons {
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+nav {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
+nav a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: #555;
+}
+
+.results header {
+  padding: 15px;
+  background: #f2f2f2;
+  display: flex;
+  justify-content: center;
+}
+
+#resultsContainer {
+  padding: 20px;
+  text-align: left;
+  max-width: 600px;
+  margin: auto;
+}
+
+.result {
+  margin-bottom: 20px;
+}
+
+.result h3 {
+  margin: 0;
+  color: #1a0dab;
+}
+
+.result a {
+  font-size: 14px;
+  color: green;
+  text-decoration: none;
+}
+
+.pagination {
+  margin: 20px;
+}
+
+/* script.js */
+const dummyResults = Array.from({ length: 50 }, (_, i) => ({
+  title: `Search Result Title ${i + 1}`,
+  url: `https://example.com/result${i + 1}`,
+  snippet: `This is a description for search result ${i + 1}.`
+}));
+
+const resultsPerPage = 10;
+let currentPage = 1;
+
+function displayResults(query = '') {
+  const startIndex = (currentPage - 1) * resultsPerPage;
+  const endIndex = startIndex + resultsPerPage;
+  const resultsToShow = dummyResults.slice(startIndex, endIndex);
+  const container = document.getElementById('resultsContainer');
+  if (!container) return;
+
+  container.innerHTML = resultsToShow.map(r => `
+    <div class="result">
+      <a href="${r.url}" target="_blank">${r.url}</a>
+      <h3>${r.title}</h3>
+      <p>${r.snippet}</p>
+    </div>
+  `).join('');
+}
+
+function saveQuery(e) {
+  e.preventDefault();
+  const query = document.getElementById('searchInput').value;
+  localStorage.setItem('searchQuery', query);
+  window.location.href = 'results.html';
+}
+
+function loadQuery() {
+  const input = document.getElementById('searchInput');
+  const query = localStorage.getItem('searchQuery') || '';
+  if (input) input.value = query;
+  displayResults(query);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('searchForm');
+  const path = window.location.pathname;
+
+  if (form) {
+    form.addEventListener('submit', saveQuery);
+  }
+
+  if (path.includes('results.html')) {
+    loadQuery();
+    document.getElementById('prevBtn').onclick = () => {
+      if (currentPage > 1) {
+        currentPage--;
+        displayResults();
+      }
+    };
+    document.getElementById('nextBtn').onclick = () => {
+      if ((currentPage * resultsPerPage) < dummyResults.length) {
+        currentPage++;
+        displayResults();
+      }
+    };
+  }
+});
